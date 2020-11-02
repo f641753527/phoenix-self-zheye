@@ -1,16 +1,41 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <CustomHeader :user="userInfo"/>
+  <div class="container">
+    <Topic :topics='topicList'/>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
+import { defineComponent, ref } from 'vue'
+import axios from 'axios'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Topic from './components/Topic.vue'
+import CustomHeader from './components/CustomHeader.vue'
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld
+    Topic,
+    CustomHeader
+  },
+  setup () {
+    const topicList = ref([])
+    const getTopics = async () => {
+      const response = await axios.get('/api/topic/list')
+      const list = response.data.data
+      topicList.value = list
+    }
+    getTopics()
+
+    const userInfo = ref({ isLogin: false, name: '', id: 0 })
+    const getUser = async () => {
+      const response = await axios.get('/api/user/profile')
+      userInfo.value = response.data.data
+    }
+    getUser()
+    return {
+      topicList, userInfo
+    }
   }
 })
 </script>
@@ -20,8 +45,5 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
