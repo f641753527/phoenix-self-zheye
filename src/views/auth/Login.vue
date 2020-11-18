@@ -1,31 +1,42 @@
 <template>
   <div>
-    <form>
-      <FormItem :rules='rules' v-model="state.email"></FormItem>
-      <p>{{ state.email }}</p>
-      <button type="submit" class="btn btn-primary">Submit</button>
+    <Form @formsubmit="formSubmit">
+      <FormItem :rules='rulesEmail' v-model="state.email" label="邮箱" placeholder="请输入邮箱"></FormItem>
+      <FormItem :rules='rulesPwd' v-model="state.pwd" label="密码" type="password" placeholder="请输入密码"></FormItem>
+      <template #submit>
+        <span class="btn btn-danger">Submit</span>
+      </template>
     </Form>
   </div>
 </template>
 
 <script lang='ts'>
 import { defineComponent, reactive } from 'vue'
+import Form from '@/components/Form.vue'
 import FormItem from '@/components/FormItem.vue'
 import { validateEmail } from '@/utils/validation'
 import RuleProps from '@/beans/ValidationRule'
 
 export default defineComponent({
-  components: { FormItem },
+  components: { Form, FormItem },
   setup () {
     const state = reactive({
-      email: ''
+      email: '',
+      pwd: ''
     })
-    const rules: RuleProps[] = [
+    const rulesEmail: RuleProps[] = [
       { type: 'required', message: 'email 地址不能为空' },
       { type: 'custom', validate: (value: string) => validateEmail.test(value), message: 'email地址格式错误' }
     ]
+    const rulesPwd: RuleProps[] = [
+      { type: 'required', message: 'password 不能为空' },
+      { type: 'custom', validate: (value: string) => value.length > 5, message: '密码不少于6位' }
+    ]
+    const formSubmit = (plyload: { isValide: boolean }) => {
+      console.log(plyload)
+    }
     return {
-      rules, state
+      rulesEmail, rulesPwd, state, formSubmit
     }
   }
 })
