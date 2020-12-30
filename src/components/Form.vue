@@ -17,7 +17,7 @@ type validateFunc = () => boolean
 
 export default defineComponent({
   emits: {
-    formsubmit: (payload: { isValide: bool }) => {
+    formsubmit: (payload: { isValide: boolean }) => {
       if (payload.isValide === undefined || typeof payload.isValide !== 'boolean') {
         return false
       }
@@ -31,8 +31,8 @@ export default defineComponent({
       const res = validateFuncArray.every(cb => cb())
       context.emit('formsubmit', { isValide: res })
     }
-    const callback = (cb: validateFunc) => {
-      validateFuncArray.push(cb)
+    const callback = (cb?: validateFunc) => {
+      cb && validateFuncArray.push(cb)
     }
 
     bus.on('form-item-create', callback)

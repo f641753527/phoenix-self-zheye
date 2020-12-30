@@ -12,6 +12,7 @@
 
 <script lang='ts'>
 import { defineComponent, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import Form from '@/components/Form.vue'
 import FormItem from '@/components/FormItem.vue'
 import { validateEmail } from '@/utils/validation'
@@ -20,6 +21,7 @@ import RuleProps from '@/beans/ValidationRule'
 export default defineComponent({
   components: { Form, FormItem },
   setup () {
+    const router = useRouter()
     const state = reactive({
       email: '',
       pwd: ''
@@ -33,7 +35,8 @@ export default defineComponent({
       { type: 'custom', validate: (value: string) => value.length > 5, message: '密码不少于6位' }
     ]
     const formSubmit = (plyload: { isValide: boolean }) => {
-      console.log(plyload)
+      if (!plyload.isValide) return
+      router.push('/home')
     }
     return {
       rulesEmail, rulesPwd, state, formSubmit
