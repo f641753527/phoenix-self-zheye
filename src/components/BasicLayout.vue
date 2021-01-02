@@ -6,8 +6,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import axios from 'axios'
+import { defineComponent, computed } from 'vue'
+import { useStore } from 'vuex'
+import StoreProps from '@/beans/Store'
 import CustomHeader from '../components/CustomHeader.vue'
 
 export default defineComponent({
@@ -15,12 +16,8 @@ export default defineComponent({
     CustomHeader
   },
   setup () {
-    const userInfo = ref({ isLogin: false, name: '', id: 0 })
-    const getUser = async () => {
-      const response = await axios.get('/api/user/profile')
-      userInfo.value = response.data.data
-    }
-    getUser()
+    const store = useStore<StoreProps>()
+    const userInfo = computed(() => store.getters.user)
     return {
       userInfo
     }

@@ -12,6 +12,7 @@
 
 <script lang='ts'>
 import { defineComponent, reactive } from 'vue'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import Form from '@/components/Form.vue'
 import FormItem from '@/components/FormItem.vue'
@@ -22,6 +23,7 @@ export default defineComponent({
   components: { Form, FormItem },
   setup () {
     const router = useRouter()
+    const store = useStore()
     const state = reactive({
       email: '',
       pwd: ''
@@ -34,8 +36,10 @@ export default defineComponent({
       { type: 'required', message: 'password 不能为空' },
       { type: 'custom', validate: (value: string) => value.length > 5, message: '密码不少于6位' }
     ]
-    const formSubmit = (plyload: { isValide: boolean }) => {
+    const formSubmit = async (plyload: { isValide: boolean }) => {
       if (!plyload.isValide) return
+      const res = await store.dispatch('login')
+      if (!res) return
       router.push('/home')
     }
     return {

@@ -1,5 +1,6 @@
 export default interface User {
-  isLogin: false;
+  isLogin: boolean;
   name?: string;
   id?: number;
+  topicId?: number;
 }

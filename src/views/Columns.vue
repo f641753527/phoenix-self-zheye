@@ -20,32 +20,27 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue'
+<script lang='ts'>
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { useStore } from 'vuex'
+import StoreProps from '@/beans/Store'
 
 export default {
   setup () {
+    const store = useStore<StoreProps>()
     const route = useRoute()
-
     const topicId = +route.params.id
+    const refresh = !route.query.refresh
 
-    const topic = ref({})
-    const getTopics = async () => {
-      const { data: topicsRes } = await axios.get('/api/topic/list')
-      const topicList = topicsRes.data
-      topic.value = topicList.find(v => v.id === topicId)
-    }
+    const topic = computed(() => store.getters.getTopicById(topicId))
 
-    const posts = ref([])
+    const posts = computed(() => store.getters.getPostsByTid(topicId))
+
     const getPosts = async () => {
-      const { data: postsRes } = await axios.get('/api/post/list')
-      const postList = postsRes.data
-      posts.value = postList.filter(v => v.topicId === topicId)
+      await store.dispatch('getPosts')
     }
-    getTopics()
-    getPosts()
+    refresh && getPosts()
     return { topic, posts }
   }
 }

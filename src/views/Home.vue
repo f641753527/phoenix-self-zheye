@@ -1,10 +1,13 @@
 <template>
+  <button @click="newPost" type="submit" class="btn btn-primary">新建文章</button>
   <Topic :topics='topicList'/>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import axios from 'axios'
+import { computed, defineComponent } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import StoreProps from '@/beans/Store'
 import Topic from '../components/Topic.vue'
 
 export default defineComponent({
@@ -13,15 +16,20 @@ export default defineComponent({
     Topic
   },
   setup () {
-    const topicList = ref([])
+    const router = useRouter()
+    const store = useStore<StoreProps>()
+    const topicList = computed(() => store.state.topics)
+
     const getTopics = async () => {
-      const response = await axios.get('/api/topic/list')
-      const list = response.data.data
-      topicList.value = list
+      await store.dispatch('getTopics')
     }
     getTopics()
+
+    const newPost = () => {
+      router.push('/create-post')
+    }
     return {
-      topicList
+      topicList, newPost
     }
   }
 })

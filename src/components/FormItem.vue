@@ -2,12 +2,21 @@
   <div class="mb-3">
     <label :for="label" class="form-label">{{ label }}</label>
     <input
+      v-if="inputType !== 'textarea'"
       type="text" class="form-control" :class="{ 'is-invalid': emailRef.hasError }" :id="label"
       :value="emailRef.value"
       @blur="validtor"
       @input="feildInput"
       v-bind="$attrs"
     >
+    <textarea
+      v-else
+      class="form-control" :class="{ 'is-invalid': emailRef.hasError }" :id="label"
+      :value="emailRef.value"
+      @blur="validtor"
+      @input="feildInput"
+      v-bind="$attrs">
+    </textarea>
     <div class="form-text invalid-feedback" v-if="emailRef.hasError">{{emailRef.errMsg}}</div>
   </div>
 </template>
@@ -17,6 +26,8 @@ import { defineComponent, onMounted, PropType, reactive } from 'vue'
 import RuleProps from '@/beans/ValidationRule'
 import bus from '@/utils/eventBus'
 
+type FormItemType = 'input' | 'textarea'
+
 const FormItem = defineComponent({
   inheritAttrs: false,
   props: {
@@ -25,6 +36,10 @@ const FormItem = defineComponent({
     },
     rules: {
       type: Array as PropType<RuleProps[]>
+    },
+    inputType: {
+      type: String as PropType<FormItemType>,
+      default: 'input'
     },
     modelValue: String
   },
