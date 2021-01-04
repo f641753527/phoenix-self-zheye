@@ -1,6 +1,10 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
 import StoreProps from '@/beans/Store'
+import cacheSessionStorage from './cache'
+import User from '@/beans/User'
+import Topic from '@/beans/Topic'
+import Post from '@/beans/Post'
 
 export default createStore<StoreProps>({
   getters: {
@@ -9,22 +13,26 @@ export default createStore<StoreProps>({
     getPostsByTid: state => (tid: number) => state.posts.filter(post => post.topicId === tid)
   },
   state: {
-    user: {
-      isLogin: false,
+    user: cacheSessionStorage.get<User>('user', {
+      isLogin: true,
       topicId: 1
-    },
-    topics: [],
-    posts: []
+    }),
+    topics: cacheSessionStorage.get<Topic[]>('topics', []),
+    posts: cacheSessionStorage.get<Post[]>('posts', [])
   },
   mutations: {
     LOGIN (state, { name, topicId }) {
-      state.user = { ...state.user, name, isLogin: true, topicId }
+      const newUser = { ...state.user, name, isLogin: true, topicId }
+      state.user = newUser
+      cacheSessionStorage.set<User>('user', newUser)
     },
     SET_TOPICS (state, list) {
       state.topics = list
+      cacheSessionStorage.set<Topic[]>('topics', list)
     },
     SET_POSTS (state, list) {
       state.posts = list
+      cacheSessionStorage.set<Post[]>('posts', list)
     },
     ADD_POST (state, newPost) {
       state.posts.push(newPost)

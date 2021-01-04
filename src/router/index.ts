@@ -39,7 +39,8 @@ const routes = [
       },
       {
         path: 'create-post',
-        component: CreatePost
+        component: CreatePost,
+        meta: { auth: true }
       }
     ]
   }
