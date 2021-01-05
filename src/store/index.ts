@@ -19,7 +19,6 @@ export default createStore<StoreProps>({
     }),
     topics: cacheSessionStorage.get<Topic[]>('topics', []),
     posts: cacheSessionStorage.get<Post[]>('posts', [])
-    
   },
   mutations: {
     LOGIN (state, { name, topicId }) {
